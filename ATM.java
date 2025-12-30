@@ -1,11 +1,16 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.*;
+import java.text.*;
 class Account{
     private int customerNumber = 0;
     private int pin = 0;
-    private double currentBalance = 0;
-    private double savingBalance = 0;
+    private double currentBalance = 20000;
+    private double savingBalance = 1000;
+    DecimalFormat df1 = new DecimalFormat("###,##0.00' Rupee'");
+    DecimalFormat df2 = new DecimalFormat("###,##0.00' Doller'");
+    Scanner sc = new Scanner(System.in);
+
     void setCustomerNumber(int customerNumber){
         this.customerNumber = customerNumber;
     }
@@ -21,15 +26,67 @@ class Account{
     double getSavingBalance(){
         return savingBalance;
     }
+
+    public void setSavingBalance(double savingBalance) {
+        this.savingBalance = savingBalance;
+    }
+
     double getCurrentBalance(){
         return currentBalance;
     }
-
-    void getCurrentDepositInput(){
-
+    void setCurrentBalance(double bal){
+        currentBalance = bal;
     }
-    void getSavingDepositInput(){
+    void getCurrentDepositInput(){
+        System.out.println("Enter Deposit amount :");
+        double deposit = sc.nextInt();
+        double cBal = getCurrentBalance();
+        if((currentBalance+deposit)>=0){
+            setCurrentBalance(cBal + deposit);
+        }else{
+            System.out.println("Invalid Amount");
+        }
+    }
+    double getCurrentDepositOutput(){
+        return getCurrentBalance();
+    }
+    void getCurrentWithdrawInput(){
+        System.out.println("Enter withdrawl amount :");
+        double w = sc.nextInt();
+        if((currentBalance-w)>=0){
+            setCurrentBalance(getCurrentBalance() - w);
+        }else{
+            System.out.println("Insufficient Balance");
+        }
+    }
+    double getCurrentWithdrawOutput(){
+        return getCurrentBalance();
+    }
 
+    void getSavingDepositInput(){
+        System.out.println("Enter Deposit amount :");
+        double deposit = sc.nextInt();
+        double cBal = getSavingBalance();
+        if((savingBalance+deposit)>=0){
+            setSavingBalance(cBal + deposit);
+        }else{
+            System.out.println("Invaid Amount");
+        }
+    }
+    double getSavingDepositOutput(){
+        return getSavingBalance();
+    }
+    void getSavingWithdrawInput(){
+        System.out.println("Enter withdrawl amount :");
+        double w = sc.nextInt();
+        if((savingBalance-w)>=0){
+            setSavingBalance(getSavingBalance() - w);
+        }else{
+            System.out.println("Insufficient Balance");
+        }
+    }
+    double getSavingWithdrawOutput(){
+        return getSavingBalance();
     }
 }
 class OptionMenu extends Account{
@@ -69,9 +126,60 @@ class OptionMenu extends Account{
 
     }
     public void getCurrent() {
+        System.out.println("Current Account :>");
+        System.out.println("1.view balance\n2.withdraw money\n3.deposit money\n4.exit");
+        int ch = sc.nextInt();
+        switch (ch){
+            case 1:
+                System.out.println("Current Balance : "+df1.format(getCurrentBalance()));
+                getAccountType();
+                break;
+            case 2:
+                getCurrentWithdrawInput();
+                getCurrentWithdrawOutput();
+                getAccountType();
+                break;
+            case 3:
+                getCurrentDepositInput();
+                getCurrentDepositOutput();
+                getAccountType();
+                break;
+            case 4:
+                System.out.println("\nThank you visit again..");
+                getAccountType();
+                break;
+            default:
+                System.err.println("Invalid choice...");
+                getCurrent();
+        }
     }
     public void getSaving() {
-
+        System.out.println("Current Account :>");
+        System.out.println("1.view balance\n2.withdraw money\n3.deposit money\n4.exit");
+        int ch = sc.nextInt();
+        switch (ch){
+            case 1:
+                System.out.println("Saving Balance : "+df1.format(getSavingBalance()));
+                getAccountType();
+                break;
+            case 2:
+                getSavingWithdrawInput();
+                getSavingWithdrawOutput();
+                getAccountType();
+                break;
+            case 3:
+                getSavingDepositInput();
+                getSavingDepositOutput();
+                getAccountType();
+                break;
+            case 4:
+                System.out.println("\nThank you visit again..");
+                getAccountType();
+                break;
+            default:
+                System.err.println("Invalid choice...");
+                getSaving();
+        }
     }
 
     public void getAccountType() {
@@ -84,9 +192,11 @@ class OptionMenu extends Account{
         switch(ch){
             case 1:
                 accType = "Current";
+                getCurrent();
                 break;
             case 2:
                 accType = "Saving";
+                getSaving();
                 break;
             case 3:
                 System.out.println("Thank you for VISITING.");
