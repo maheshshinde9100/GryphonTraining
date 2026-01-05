@@ -1,0 +1,7 @@
+step1: import the package  - import java.sql.*;
+step2: load & register the driver
+step3: establish the connection
+step4: create statement object
+step5: excecute query
+step6: collect the data 
+step7: close the connection
