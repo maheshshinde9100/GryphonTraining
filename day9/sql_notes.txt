@@ -1,0 +1,39 @@
+        Why We Use Window FunctionsBasic Syntax:
+window_function (expression) OVER (PARTITION BY column ORDER BY column)
+
+Why We Use Window Functions?
+- To compare the current row with previous/next rows.
+- To calculate moving averages.
+- To avoid complex subqueries.
+
+Types of Window Functions:
+1. ROW_NUMBER()
+2. RANK()
+3. DENSE_RANK()
+4. SUM()
+5. AVG()
+6. LAG()
+7. LEAD()
+
+Example Queries (table 'employees' with columns: id, name, salary, department):
+
+1. ROW_NUMBER():
+   SELECT name, salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn FROM employees;
+
+2. RANK():
+   SELECT name, salary, RANK() OVER (ORDER BY salary DESC) AS rnk FROM employees;
+
+3. DENSE_RANK():
+   SELECT name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS drnk FROM employees;
+
+4. SUM():
+   SELECT name, salary, SUM(salary) OVER (PARTITION BY department ORDER BY salary) AS running_sum FROM employees;
+
+5. AVG():
+   SELECT name, salary, AVG(salary) OVER (PARTITION BY department) AS dept_avg FROM employees;
+
+6. LAG():
+   SELECT name, salary, LAG(salary) OVER (ORDER BY salary) AS prev_salary FROM employees;
+
+7. LEAD():
+   SELECT name, salary, LEAD(salary) OVER (ORDER BY salary) AS next_salary FROM employees;
