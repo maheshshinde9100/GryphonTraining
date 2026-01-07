@@ -15,7 +15,7 @@ Types of Window Functions:
 6. LAG()
 7. LEAD()
 
-Example Queries (table 'employees' with columns: id, name, salary, department):
+##table 'employees' with columns: id, name, salary, department, hire_date
 
 1. ROW_NUMBER():
    SELECT name, salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn FROM employees;
@@ -37,3 +37,29 @@ Example Queries (table 'employees' with columns: id, name, salary, department):
 
 7. LEAD():
    SELECT name, salary, LEAD(salary) OVER (ORDER BY salary) AS next_salary FROM employees;
+
+### altering the table strcuture for the following task:
+
+ALTER TABLE employees ADD COLUMN hire_date DATE;
+
+### updating table records:
+
+UPDATE employees SET hire_date = '2023-01-15' WHERE id = 1;
+UPDATE employees SET hire_date = '2023-02-10' WHERE id = 2;
+UPDATE employees SET hire_date = '2023-03-05' WHERE id = 3;
+UPDATE employees SET hire_date = '2023-04-20' WHERE id = 4;
+UPDATE employees SET hire_date = '2023-05-12' WHERE id = 5;
+UPDATE employees SET hire_date = '2023-06-08' WHERE id = 6;
+UPDATE employees SET hire_date = '2023-07-25' WHERE id = 7;
+UPDATE employees SET hire_date = '2023-08-14' WHERE id = 8;
+UPDATE employees SET hire_date = '2023-09-30' WHERE id = 9;
+UPDATE employees SET hire_date = '2023-10-18' WHERE id = 10;
+
+8. Identify the employee who is the second last joiner:
+
+   SELECT name, hire_date
+   FROM (
+       SELECT name, hire_date, ROW_NUMBER() OVER (ORDER BY hire_date DESC) AS rn
+       FROM employees
+   ) AS sub
+   WHERE rn = 2;
