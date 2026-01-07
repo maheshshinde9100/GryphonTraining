@@ -63,3 +63,311 @@ UPDATE employees SET hire_date = '2023-10-18' WHERE id = 10;
        FROM employees
    ) AS sub
    WHERE rn = 2;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Q.2] average department salary
+
+mysql> select name,avg(salary) over() total_salary from employees;
++---------+--------------+
+| name    | total_salary |
++---------+--------------+
+| Alice   |        61200 |
+| Bob     |        61200 |
+| Charlie |        61200 |
+| David   |        61200 |
+| Eve     |        61200 |
+| Frank   |        61200 |
+| Grace   |        61200 |
+| Henry   |        61200 |
+| Ivy     |        61200 |
+| Jack    |        61200 |
++---------+--------------+
+10 rows in set (0.00 sec)
+
+
+Q.3] running salary total by join date
+mysql> select name,hire_date,sum(salary) over() total_salary from employees;
++---------+------------+--------------+
+| name    | hire_date  | total_salary |
++---------+------------+--------------+
+| Alice   | 2023-01-15 |       612000 |
+| Bob     | 2023-02-10 |       612000 |
+| Charlie | 2023-03-05 |       612000 |
+| David   | 2023-04-20 |       612000 |
+| Eve     | 2023-05-12 |       612000 |
+| Frank   | 2023-06-08 |       612000 |
+| Grace   | 2023-07-25 |       612000 |
+| Henry   | 2023-08-14 |       612000 |
+| Ivy     | 2023-09-30 |       612000 |
+| Jack    | 2023-10-18 |       612000 |
++---------+------------+--------------+
+10 rows in set (0.00 sec)
+
+
+
+Q.4] salary difference from department average
+
+mysql> select name,salary,salary - avg(salary) over(partition by department) diff from employees;
++---------+--------+-------+
+| name    | salary | diff  |
++---------+--------+-------+
+| Eve     |  65000 |  6000 |
+| Henry   |  53000 | -6000 |
+| Alice   |  50000 | -7750 |
+| Charlie |  55000 | -2750 |
+| Frank   |  58000 |   250 |
+| Ivy     |  68000 | 10250 |
+| Bob     |  60000 | -5750 |
+| David   |  70000 |  4250 |
+| Grace   |  72000 |  6250 |
+| Jack    |  61000 | -4750 |
++---------+--------+-------+
+10 rows in set (0.00 sec)
+
+
+Q.6] % conttibution to department salary 
+
+mysql> select name,salary*100 / sum(salary) over( partition by department) contribution from employees;
++---------+--------------------+
+| name    | contribution       |
++---------+--------------------+
+| Eve     |  55.08474576271186 |
+| Henry   |  44.91525423728814 |
+| Alice   | 21.645021645021647 |
+| Charlie |  23.80952380952381 |
+| Frank   |  25.10822510822511 |
+| Ivy     | 29.437229437229437 |
+| Bob     | 22.813688212927758 |
+| David   |  26.61596958174905 |
+| Grace   | 27.376425855513308 |
+| Jack    | 23.193916349809886 |
++---------+--------------------+
+10 rows in set (0.00 sec)
+
+
+Q.7] commulative salary by department & join date.
+
+mysql> select name,department,sum(salary) over(partition by department order by hire_date) cum from employees;
++---------+------------+--------+
+| name    | department | cum    |
++---------+------------+--------+
+| Eve     | Finance    |  65000 |
+| Henry   | Finance    | 118000 |
+| Alice   | HR         |  50000 |
+| Charlie | HR         | 105000 |
+| Frank   | HR         | 163000 |
+| Ivy     | HR         | 231000 |
+| Bob     | IT         |  60000 |
+| David   | IT         | 130000 |
+| Grace   | IT         | 202000 |
+| Jack    | IT         | 263000 |
++---------+------------+--------+
+10 rows in set (0.00 sec)
+
+
+Q.8] Find departments where avg salary is greater than company average..
+
+
+mysql> SELECT department
+    -> FROM employees
+    -> GROUP BY department
+    -> HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
++------------+
+| department |
++------------+
+| IT         |
++------------+
+1 row in set (0.01 sec)
+
+mysql>
+
+
+Q.9] Moving average of last 3 joined employees
+
+mysql> select name,hire_date,avg(salary) over(order by hire_date) mov_avg from employees;
++---------+------------+--------------------+
+| name    | hire_date  | mov_avg            |
++---------+------------+--------------------+
+| Alice   | 2023-01-15 |              50000 |
+| Bob     | 2023-02-10 |              55000 |
+| Charlie | 2023-03-05 |              55000 |
+| David   | 2023-04-20 |              58750 |
+| Eve     | 2023-05-12 |              60000 |
+| Frank   | 2023-06-08 | 59666.666666666664 |
+| Grace   | 2023-07-25 |  61428.57142857143 |
+| Henry   | 2023-08-14 |              60375 |
+| Ivy     | 2023-09-30 |  61222.22222222222 |
+| Jack    | 2023-10-18 |              61200 |
++---------+------------+--------------------+
+10 rows in set (0.00 sec)
+
+
+
+### LAG() function
+
+1] previous salary :    LAG()
+
+select name,salary lag(salary) over(order by salary) prev_sal from employees;
+
+
+mysql> select name,salary,lag(salary) over(order by salary) prev_sal from employees;
++---------+--------+----------+
+| name    | salary | prev_sal |
++---------+--------+----------+
+| Alice   |  50000 |     NULL |
+| Henry   |  53000 |    50000 |
+| Charlie |  55000 |    53000 |
+| Frank   |  58000 |    55000 |
+| Bob     |  60000 |    58000 |
+| Jack    |  61000 |    60000 |
+| Eve     |  65000 |    61000 |
+| Ivy     |  68000 |    65000 |
+| David   |  70000 |    68000 |
+| Grace   |  72000 |    70000 |
++---------+--------+----------+
+10 rows in set (0.00 sec)
+
+
+2] Next salary :  LEAD()
+
+select name,salary lead(salary) over(order by salary) next_sal from employees;
+
+
+3] salary difference with previous employee
+
+mysql> select name,salary, salary - lag(salary) over(order by salary) diff from employees;
++---------+--------+------+
+| name    | salary | diff |
++---------+--------+------+
+| Alice   |  50000 | NULL |
+| Henry   |  53000 | 3000 |
+| Charlie |  55000 | 2000 |
+| Frank   |  58000 | 3000 |
+| Bob     |  60000 | 2000 |
+| Jack    |  61000 | 1000 |
+| Eve     |  65000 | 4000 |
+| Ivy     |  68000 | 3000 |
+| David   |  70000 | 2000 |
+| Grace   |  72000 | 2000 |
++---------+--------+------+
+10 rows in set (0.00 sec)
+
+
+5] compare join date with previous employee
+
+mysql> select name,hire_date,lag(hire_date)over(order by hire_date) pre_join_date from employees;
+
++---------+------------+---------------+
+| name    | hire_date  | pre_join_date |
++---------+------------+---------------+
+| Alice   | 2023-01-15 | NULL          |
+| Bob     | 2023-02-10 | 2023-01-15    |
+| Charlie | 2023-03-05 | 2023-02-10    |
+| David   | 2023-04-20 | 2023-03-05    |
+| Eve     | 2023-05-12 | 2023-04-20    |
+| Frank   | 2023-06-08 | 2023-05-12    |
+| Grace   | 2023-07-25 | 2023-06-08    |
+| Henry   | 2023-08-14 | 2023-07-25    |
+| Ivy     | 2023-09-30 | 2023-08-14    |
+| Jack    | 2023-10-18 | 2023-09-30    |
++---------+------------+---------------+
+10 rows in set (0.00 sec)
+
+
+6] Identify salary increases over previous
+
+mysql> select name from( select name,salary,salary-lag(salary) over (order by salary) diff from employees) x where diff>0;
++---------+
+| name    |
++---------+
+| Henry   |
+| Charlie |
+| Frank   |
+| Bob     |
+| Jack    |
+| Eve     |
+| Ivy     |
+| David   |
+| Grace   |
++---------+
+9 rows in set (0.01 sec)
+
+mysql>
+
+
+7] find employees whose salary is greater than both previous and next 
+
+
+SELECT * 
+FROM (
+    SELECT 
+        name, 
+        salary, 
+        LAG(salary) OVER (ORDER BY salary) AS prev, 
+        LEAD(salary) OVER (ORDER BY salary) AS next 
+    FROM employees
+) AS subquery_alias -- Mandatory alias for the subquery
+WHERE salary > prev AND salary > next;
+
+
+8] department wise salry jump > 10%
+
+
+mysql> WITH SalaryHistory AS (
+    ->     SELECT
+    ->         id,
+    ->         name,
+    ->         department,
+    ->         salary,
+    ->         LAG(salary) OVER (
+    ->             PARTITION BY department
+    ->             ORDER BY salary ASC
+    ->         ) AS previous_salary
+    ->     FROM employees
+    -> )
+    -> SELECT
+    ->     id,
+    ->     name,
+    ->     department,
+    ->     salary AS current_salary,
+    ->     previous_salary,
+    ->     ROUND(((salary - previous_salary) / previous_salary) * 100, 2) AS jump_percentage
+    -> FROM SalaryHistory
+    -> WHERE (salary - previous_salary) / previous_salary > 0.10;
++----+-------+------------+----------------+-----------------+-----------------+
+| id | name  | department | current_salary | previous_salary | jump_percentage |
++----+-------+------------+----------------+-----------------+-----------------+
+|  5 | Eve   | Finance    |          65000 |           53000 |           22.64 |
+|  9 | Ivy   | HR         |          68000 |           58000 |           17.24 |
+|  4 | David | IT         |          70000 |           61000 |           14.75 |
++----+-------+------------+----------------+-----------------+-----------------+
+3 rows in set (0.00 sec)
+
+mysql>
+
+
+9] detect salary trend  (up/down/same)
+
+select name , case when salary > lag(salary) over(order by hire_date) then 'UP' when salary<lag(salary) over (order by hire_date) then 'DOWN' else 'SAME' end trend from employees;
+
+mysql> select name , case when salary > lag(salary) over(order by hire_date) then 'UP' when salary<lag(salary) over (order by hire_date) then 'DOWN' else 'SAME' end trend from employees;
++---------+-------+
+| name    | trend |
++---------+-------+
+| Alice   | SAME  |
+| Bob     | UP    |
+| Charlie | DOWN  |
+| David   | UP    |
+| Eve     | DOWN  |
+| Frank   | DOWN  |
+| Grace   | UP    |
+| Henry   | DOWN  |
+| Ivy     | UP    |
+| Jack    | DOWN  |
++---------+-------+
+10 rows in set (0.00 sec)
+
+
+
+
+
