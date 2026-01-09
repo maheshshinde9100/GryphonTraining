@@ -1,4 +1,3 @@
-print('hello world')
 class Car:
     name = ""
     color = ""
@@ -60,11 +59,42 @@ class FileOperations:
             print("Please choose enter correct file opening mode : (r,w,a)")
             exit
 
-fileName = input("Enter File Name : ")
-mode = input("Enter file opening mode : (r,w,a)")
-fs = FileOperations(fileName,mode)
+# fileName = input("Enter File Name : ")
+# mode = input("Enter file opening mode : (r,w,a)")
+# fs = FileOperations(fileName,mode)
 
-fs.doOperation()
+# fs.doOperation()
+
+
+# ------------------------------------------------
+# Inheritance in python
+
+class Person:
+    def __init__(self, name, age, gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
+        print("Parent constructor is called...")
+
+    def display(self):
+        print(self.name, self.age, self.gender)
+
+
+class Student(Person):
+    def __init__(self, name, age, gender, branch):
+        super().__init__(name, age, gender) 
+        self.branch = branch
+        print("Child constructor is called...")
+
+    def display(self):
+        super().display()
+        print(self.branch)
+
+
+obj = Student('Steve', 20, "Male", "Computer Engineering")
+obj.display()
+
+
 
 
 
