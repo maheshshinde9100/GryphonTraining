@@ -1,0 +1,4 @@
+POP(Procedural oriented programming) -  Follows Top Down Approach
+OOP - Follows Bottom UP Approach
+
+The first parameter of constructor is always - self keyword
