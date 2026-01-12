@@ -1,0 +1,6 @@
+1. import db library
+2. create a connection
+3. create a cursor
+4. Execute SQL queries
+5. COmmit Changes (for INSERT,UPDATE,DELETE)
+6. Close cursor and connection

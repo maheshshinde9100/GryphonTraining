@@ -2,3 +2,92 @@ POP(Procedural oriented programming) -  Follows Top Down Approach
 OOP - Follows Bottom UP Approach
 
 The first parameter of constructor is always - self keyword
+
+# Inheritance in python
+
+class Person:
+    def __init__(self,name,age,gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
+        print("parent constructor is called...")
+    def display(self):
+        print(self.name,self.age,self.gender)
+
+class Student(Person):
+    def __init__(self,name,age,gender):
+        print("Child constructor is called...")
+    pass
+
+object = Student('Steve',20,"Male")    #output : Child constructor is called...
+# object.display()    
+
+NOTE :  If CHILD class constructor is not available then calling the PARENT class constructor
+____________________________________________________________________________________________________________
+
+### Day 4 - Notes
+#File operations
+1. Open
+2. Close
+3. Read
+4. Write
+5. Append
+
+fd = open("sample.txt","r")
+
+-> here fd points to the first byte of the file
+fd.close()  # file descripter gets deleted
+
+-->file read operation
+
+data = fd.read()
+data = fd.read(4)  # number of bytes (char) we want to read
+print(data)
+
+#File pointer moves forward by number of bits
+
+data = fd.read(4)  # number of bytes (char) we want to read
+print(data)
+
+------------------------------
+fd = open("sample.txt","w")   # opening the file in write mode
+fd.write("It is a new Line")  # it overrides the file
+fd.close()
+
+NOTE: In write mode if file is not exist then it will create new file
+--------------------------------
+
+#Exception Handling
+1.Syntax error
+2.Semantic (Logical Error)
+3.Runtime (Exception)
+
+@Types of Error
+1. ValueError -> Occurs when the type is correct byt the value is invalid
+
+ex., 
+try:
+   age = int("twenty")
+except ValueError:
+    print("Invalid value for Integer Conversion")
+
+output -> Invalid value for Integer Conversion
+
+2. TypeError -> occurs when operation is performed on incompatible Types
+ex.,
+try:
+    result = "10"+5
+except TypeError:
+    print("TypeError occurred")
+
+output -> TypeError occurred
+
+3. IndexError -> Occurs when accessing as invalid index of sequences (for lists, tuples)
+4. KeyError -> When key is not present in Dictionary (for dictionaries)
+5. FileNoFoundError -> if file now exist
+
+# Generic Exception Handling (use if dont know about which exception is going to occur)
+try:
+    x = int("abc")
+except Exception as e:
+    print("Error occured : ",e)
